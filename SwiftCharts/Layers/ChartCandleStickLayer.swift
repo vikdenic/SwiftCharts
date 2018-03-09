@@ -12,7 +12,7 @@ import UIKit
 open class ChartCandleStickLayer<T: ChartPointCandleStick>: ChartPointsLayer<T> {
     
     fileprivate var screenItems: [CandleStickScreenItem] = []
-
+    
     fileprivate let itemWidth: CGFloat
     fileprivate let strokeWidth: CGFloat
     fileprivate let increasingColor: UIColor
@@ -47,7 +47,7 @@ open class ChartCandleStickLayer<T: ChartPointCandleStick>: ChartPointsLayer<T> 
             context.stroke(screenItem.rect)
         }
     }
-
+    
     fileprivate func generateScreenItems() -> [CandleStickScreenItem] {
         return chartPointsModels.map {model in
             
@@ -88,3 +88,4 @@ private struct CandleStickScreenItem {
     }
     
 }
+

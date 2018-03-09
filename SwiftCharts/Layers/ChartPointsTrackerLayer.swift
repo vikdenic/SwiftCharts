@@ -9,10 +9,10 @@
 import UIKit
 
 open class ChartPointsTrackerLayer<T: ChartPoint>: ChartPointsLayer<T> {
-   
+    
     fileprivate var view: TrackerView?
     fileprivate let locChangedFunc: ((CGPoint) -> ())
-
+    
     fileprivate let lineColor: UIColor
     fileprivate let lineWidth: CGFloat
     
@@ -31,7 +31,7 @@ open class ChartPointsTrackerLayer<T: ChartPoint>: ChartPointsLayer<T> {
     }
     
     open override func display(chart: Chart) {
-        let view = TrackerView(frame: chart.bounds, updateFunc: {[weak self] location in
+        let view = TrackerView(frame: chart.view.bounds, updateFunc: {[weak self] location in
             self?.locChangedFunc(location)
             self?.currentPositionLineOverlay.center.x = location.x
         })
@@ -74,3 +74,4 @@ private class TrackerView: UIView {
         self.updateFunc?(location)
     }
 }
+

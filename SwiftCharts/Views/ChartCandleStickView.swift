@@ -9,17 +9,17 @@
 import UIKit
 
 open class ChartCandleStickView: UIView {
-
+    
     fileprivate let innerRect: CGRect
     
-    fileprivate let fillColor: UIColor
-    fileprivate let strokeColor: UIColor
+    public var fillColor: UIColor
+    public var strokeColor: UIColor
     
-    fileprivate var currentFillColor: UIColor
-    fileprivate var currentStrokeColor: UIColor
+    public var currentFillColor: UIColor
+    public var currentStrokeColor: UIColor
     
-    fileprivate let highlightColor = UIColor.red
-   
+    public var highlightColor = UIColor.red
+    
     fileprivate let strokeWidth: CGFloat
     
     var highlighted: Bool = false {
@@ -42,7 +42,7 @@ open class ChartCandleStickView: UIView {
         let t = innerRectTop - top
         let hsw = strokeWidth / 2
         innerRect = CGRect(x: hsw, y: t + hsw, width: width - strokeWidth, height: innerRectBottom - top - t - strokeWidth)
-
+        
         self.fillColor = fillColor
         self.strokeColor = strokeColor
         
@@ -54,14 +54,14 @@ open class ChartCandleStickView: UIView {
         
         backgroundColor = UIColor.clear
     }
-
+    
     required public init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     override open func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else {return}
-
+        
         let wHalf = frame.width / 2
         
         context.setLineWidth(strokeWidth)
@@ -76,6 +76,7 @@ open class ChartCandleStickView: UIView {
         context.fill(innerRect)
         context.stroke(innerRect)
     }
-   
-
+    
+    
 }
+

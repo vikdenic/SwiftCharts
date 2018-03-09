@@ -10,35 +10,35 @@ import UIKit
 
 /// ChartSettings allows configuration of the visual layout of a chart
 public struct ChartSettings {
-
+    
     /// Empty space in points added to the leading edge of the chart
     public var leading: CGFloat = 0
-
+    
     /// Empty space in points added to the top edge of the chart
     public var top: CGFloat = 0
-
+    
     /// Empty space in points added to the trailing edge of the chart
     public var trailing: CGFloat = 0
-
+    
     /// Empty space in points added to the bottom edge of the chart
     public var bottom: CGFloat = 0
-
+    
     /// The spacing in points between axis labels when using multiple labels for each axis value. This is currently only supported with an X axis.
     public var labelsSpacing: CGFloat = 5
-
+    
     /// The spacing in points between X axis labels and the X axis line
     public var labelsToAxisSpacingX: CGFloat = 5
-
+    
     /// The spacing in points between Y axis labels and the Y axis line
     public var labelsToAxisSpacingY: CGFloat = 5
-
+    
     public var spacingBetweenAxesX: CGFloat = 15
-
+    
     public var spacingBetweenAxesY: CGFloat = 15
-
+    
     /// The spacing in points between axis title labels and axis labels
     public var axisTitleLabelsToLabelsSpacing: CGFloat = 5
-
+    
     /// The stroke width in points of the axis lines
     public var axisStrokeWidth: CGFloat = 1.0
     
@@ -57,7 +57,7 @@ public struct ChartSettingsZoomPan {
     public var panEnabled = false
     
     public var zoomEnabled = false
-
+    
     public var minZoomX: CGFloat?
     
     public var minZoomY: CGFloat?
@@ -89,20 +89,20 @@ public protocol ChartDelegate {
 
 /// A Chart object is the highest level access to your chart. It has the view where all of the chart layers are drawn, which you can provide (useful if you want to position it as part of a storyboard or XIB), or it can be created for you.
 open class Chart: Pannable, Zoomable {
-
+    
     /// The view that the chart is drawn in
     open let view: ChartView
-
+    
     open let containerView: UIView
     open let contentView: UIView
     open let drawersContentView: UIView
     open let containerViewUnclipped: UIView
-
+    
     /// The layers of the chart that are drawn in the view
     fileprivate let layers: [ChartLayer]
-
+    
     open var delegate: ChartDelegate?
-
+    
     open var transX: CGFloat {
         return contentFrame.minX
     }
@@ -110,7 +110,7 @@ open class Chart: Pannable, Zoomable {
     open var transY: CGFloat {
         return contentFrame.minY
     }
-
+    
     open var scaleX: CGFloat {
         return contentFrame.width / containerFrame.width
     }
@@ -118,7 +118,7 @@ open class Chart: Pannable, Zoomable {
     open var scaleY: CGFloat {
         return contentFrame.height / containerFrame.height
     }
- 
+    
     open var maxScaleX: CGFloat? {
         return settings.zoomPan.maxZoomX
     }
@@ -153,27 +153,27 @@ open class Chart: Pannable, Zoomable {
     
     /**
      Create a new Chart with a frame and layers. A new ChartBaseView will be created for you.
-
+     
      - parameter innerFrame: Frame comprised by axes, where the chart displays content
      - parameter settings: Chart settings
      - parameter frame:  The frame used for the ChartBaseView
      - parameter layers: The layers that are drawn in the chart
-
+     
      - returns: The new Chart
      */
     convenience public init(frame: CGRect, innerFrame: CGRect? = nil, settings: ChartSettings, layers: [ChartLayer]) {
         self.init(view: ChartBaseView(frame: frame), innerFrame: innerFrame, settings: settings, layers: layers)
     }
-
+    
     /**
      Create a new Chart with a view and layers.
-
+     
      
      - parameter innerFrame: Frame comprised by axes, where the chart displays content
      - parameter settings: Chart settings
      - parameter view:   The view that the chart will be drawn in
      - parameter layers: The layers that are drawn in the chart
-
+     
      - returns: The new Chart
      */
     public init(view: ChartView, innerFrame: CGRect? = nil, settings: ChartSettings, layers: [ChartLayer],
@@ -182,7 +182,7 @@ open class Chart: Pannable, Zoomable {
         self.layers = layers
         
         self.view = view
-
+        
         self.settings = settings
         
         let containerView = UIView(frame: innerFrame ?? view.bounds)
@@ -194,10 +194,10 @@ open class Chart: Pannable, Zoomable {
         let contentView = ChartContentView(frame: containerView.bounds)
         contentView.backgroundColor = UIColor.clear
         containerView.addSubview(contentView)
-
+        
         containerView.clipsToBounds = settings.clipInnerFrame
         view.addSubview(containerView)
-
+        
         // TODO consider moving this view to ChartPointsViewsLayer (together with customClipRect setting) and create it on demand.
         // then `enableTouchOnUnclippedContainer` can also be removed from `Chart`
         containerViewUnclipped = UIView(frame: containerView.bounds)
@@ -208,7 +208,7 @@ open class Chart: Pannable, Zoomable {
             shape.path = UIBezierPath(rect: customClipRect).cgPath
             containerViewUnclipped.layer.mask = shape
         }
-
+        
         self.contentView = contentView
         self.drawersContentView = drawersContentView
         self.containerView = containerView
@@ -224,7 +224,7 @@ open class Chart: Pannable, Zoomable {
         self.view.setNeedsDisplay()
         
         #if !os(tvOS)
-        view.initRecognizers(settings)
+            view.initRecognizers(settings)
         #endif
         
         configZoomPan(settings.zoomPan)
@@ -239,16 +239,16 @@ open class Chart: Pannable, Zoomable {
     public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     /**
      Adds a subview to the chart's content view
-
+     
      - parameter view: The subview to add to the chart's content view
      */
     open func addSubview(_ view: UIView) {
         contentView.addSubview(view)
     }
-
+    
     open func addSubviewNoTransform(_ view: UIView) {
         containerView.addSubview(view)
     }
@@ -261,7 +261,7 @@ open class Chart: Pannable, Zoomable {
     open var frame: CGRect {
         return view.frame
     }
-
+    
     var containerFrame: CGRect {
         return containerView.frame
     }
@@ -279,21 +279,21 @@ open class Chart: Pannable, Zoomable {
     open var bounds: CGRect {
         return view.bounds
     }
-
+    
     /**
      Removes the chart's view from its superview
      */
     open func clearView() {
         view.removeFromSuperview()
     }
-
+    
     open func update() {
         for layer in layers {
             layer.update()
         }
         self.view.setNeedsDisplay()
     }
- 
+    
     func notifyAxisInnerFrameChange(xLow: ChartAxisLayerWithFrameDelta? = nil, yLow: ChartAxisLayerWithFrameDelta? = nil, xHigh: ChartAxisLayerWithFrameDelta? = nil, yHigh: ChartAxisLayerWithFrameDelta? = nil) {
         for layer in layers {
             layer.handleAxisInnerFrameChange(xLow, yLow: yLow, xHigh: xHigh, yHigh: yHigh)
@@ -311,7 +311,7 @@ open class Chart: Pannable, Zoomable {
         
         // Change dimensions of content view by total delta of container view
         contentView.frame = CGRect(x: contentView.frame.origin.x, y: contentView.frame.origin.y, width: contentView.frame.width - (yLow.deltaDefault0 + yHigh.deltaDefault0), height: contentView.frame.height - (xLow.deltaDefault0 + xHigh.deltaDefault0))
-
+        
         // Scale contents of content view
         let widthChangeFactor = contentView.frame.width / previousContentFrame.width
         let heightChangeFactor = contentView.frame.height / previousContentFrame.height
@@ -350,13 +350,13 @@ open class Chart: Pannable, Zoomable {
             layer.handlePanStart(location)
         }
     }
-
+    
     open func onPanEnd() {
         for layer in layers {
             layer.handlePanEnd()
         }
     }
-
+    
     open func onZoomEnd() {
         for layer in layers {
             layer.handleZoomEnd()
@@ -369,7 +369,7 @@ open class Chart: Pannable, Zoomable {
         }
         delegate?.onPan(transX: transX, transY: transY, deltaX: deltaX, deltaY: deltaY, isGesture: isGesture, isDeceleration: isDeceleration)
     }
-
+    
     func onTap(_ location: CGPoint) {
         var models = [TappedChartPointLayerModels<ChartPoint>]()
         for layer in layers {
@@ -387,7 +387,7 @@ open class Chart: Pannable, Zoomable {
     open func resetPanZoom() {
         zoom(scaleX: minScaleX ?? 1, scaleY: minScaleY ?? 1, anchorX: 0, anchorY: 0)
         
-        // TODO exact numbers. 
+        // TODO exact numbers.
         // Chart needs unified functionality to get/set current transform matrix independently of implementation details like contentView or axes transform, which are separate.
         // Currently the axes and the content view basically manage the transform separately
         // For more details, see http://stackoverflow.com/questions/41337146/apply-transform-matrix-to-core-graphics-drawing-and-subview
@@ -398,10 +398,10 @@ open class Chart: Pannable, Zoomable {
             layer.keepInBoundaries()
         }
     }
-
+    
     /**
      Draws the chart's layers in the chart view
-
+     
      - parameter rect: The rect that needs to be drawn
      */
     fileprivate func drawRect(_ rect: CGRect) {
@@ -476,7 +476,7 @@ open class ChartView: UIView, UIGestureRecognizerDelegate {
         super.init(frame: frame)
         sharedInit()
     }
-
+    
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         sharedInit()
@@ -505,7 +505,7 @@ open class ChartView: UIView, UIGestureRecognizerDelegate {
             addGestureRecognizer(pinchRecognizer)
             self.pinchRecognizer = pinchRecognizer
         }
-    
+        
         if settings.zoomPan.panEnabled {
             let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(ChartView.onPan(_:)))
             panRecognizer.delegate = self
@@ -519,13 +519,13 @@ open class ChartView: UIView, UIGestureRecognizerDelegate {
         addGestureRecognizer(tapRecognizer)
         self.tapRecognizer = tapRecognizer
     }
-
+    
     fileprivate var zoomCenter: CGPoint?
     
     @objc func onPinch(_ sender: UIPinchGestureRecognizer) {
         
         guard let chartSettings = chart?.settings, chartSettings.zoomPan.zoomEnabled else {return}
-
+        
         switch sender.state {
         case .began:
             zoomCenter = nil
@@ -538,7 +538,7 @@ open class ChartView: UIView, UIGestureRecognizerDelegate {
                 let center = sender.location(in: self)
                 zoomCenter = center
                 return center
-            }()
+                }()
             
             let x = abs(sender.location(in: self).x - sender.location(ofTouch: 1, in: self).x)
             let y = abs(sender.location(in: self).y - sender.location(ofTouch: 1, in: self).y)
@@ -672,7 +672,7 @@ open class ChartView: UIView, UIGestureRecognizerDelegate {
             
             var deltaX = lastPanTranslation.map{trans.x - $0.x} ?? trans.x
             let deltaY = lastPanTranslation.map{trans.y - $0.y} ?? trans.y
-
+            
             var (finalDeltaX, finalDeltaY) = finalPanDelta(deltaX: deltaX, deltaY: deltaY)
             
             lastPanTranslation = trans
@@ -680,7 +680,7 @@ open class ChartView: UIView, UIGestureRecognizerDelegate {
             if (chart?.allowPan(location: location, deltaX: finalDeltaX, deltaY: finalDeltaY, isGesture: true, isDeceleration: false)) ?? false {
                 chart?.pan(deltaX: finalDeltaX, deltaY: finalDeltaY, isGesture: true, isDeceleration: false, elastic: chart?.zoomPanSettings.elastic ?? false)
             }
-
+            
         case .ended:
             
             guard let view = sender.view, let chart = chart else {print("No view or chart"); return}
@@ -690,7 +690,7 @@ open class ChartView: UIView, UIGestureRecognizerDelegate {
             let velocityY = sender.velocity(in: sender.view).y
             
             let (finalDeltaX, finalDeltaY) = finalPanDelta(deltaX: velocityX, deltaY: velocityY)
-
+            
             let location = sender.location(in: self)
             
             func next(_ velocityX: CGFloat, velocityY: CGFloat) {
@@ -700,7 +700,7 @@ open class ChartView: UIView, UIGestureRecognizerDelegate {
                     
                     if abs(velocityX) > 0.1 || abs(velocityY) > 0.1 {
                         let friction: CGFloat = 0.9
-
+                        
                         next(velocityX * friction, velocityY: velocityY * friction)
                         
                     } else {
@@ -785,7 +785,7 @@ open class ChartView: UIView, UIGestureRecognizerDelegate {
         case .cancelled: break;
         case .failed: break;
         case .possible:
-//            sender.state = UIGestureRecognizerState.Changed
+            //            sender.state = UIGestureRecognizerState.Changed
             break;
         }
     }
@@ -794,5 +794,6 @@ open class ChartView: UIView, UIGestureRecognizerDelegate {
         chart?.onTap(sender.location(in: self))
     }
     #endif
-
+    
 }
+

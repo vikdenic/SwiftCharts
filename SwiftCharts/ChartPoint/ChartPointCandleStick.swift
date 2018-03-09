@@ -27,11 +27,12 @@ open class ChartPointCandleStick: ChartPoint {
         self.low = low
         self.open = open
         self.close = close
-
+        
         super.init(x: x, y: highY)
     }
-
+    
     required public init(x: ChartAxisValue, y: ChartAxisValue) {
         fatalError("init(x:y:) has not been implemented")
     }
 }
+
