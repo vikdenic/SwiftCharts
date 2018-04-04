@@ -185,8 +185,8 @@ open class Chart: Pannable, Zoomable {
         
         self.settings = settings
         
-        let containerView = UIView(frame: innerFrame ?? view.bounds)
-        
+        let containerView = UIView(frame: view.bounds)
+        c
         let drawersContentView = ChartContentView(frame: containerView.bounds)
         drawersContentView.backgroundColor = UIColor.clear
         containerView.addSubview(drawersContentView)
