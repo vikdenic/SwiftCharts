@@ -15,6 +15,7 @@ open class ChartPointCandleStick: ChartPoint {
     open let close: Double
     open let low: Double
     open let high: Double
+    open var referenceObject: Any?
     
     public init(date: Date, formatter: DateFormatter, high: Double, low: Double, open: Double, close: Double, labelHidden: Bool = false) {
         
